@@ -1,6 +1,6 @@
 {
-    "name": "Medium Extension",
-    "description": "This extension is made for demonstration purposes",
+    "name": "__MSG_extension_name__",
+    "description": "__MSG_extension_description__",
     "version": "1.0",
     "manifest_version": 3,
     "action": {
@@ -8,5 +8,6 @@
     },
     "background": {
        "service_worker": "background.js"
-    }
+    },
+    "default_locale": "en"
 }

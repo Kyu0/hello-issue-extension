@@ -1,0 +1,8 @@
+{
+    "extension_name": {
+        "message": "Hello Issue (헬로 이슈)"
+    },
+    "extension_description": {
+        "message": "쉽게 깃허브 기여자가 될 수 있도록 해결하기 쉬운 이슈들을 알려주는 크롬 확장 프로그램입니다."
+    }
+}
