@@ -21,6 +21,8 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@octokit/rest": "^20.0.2",
+    "@octokit/types": "^12.6.0",
     "jquery": "^3.7.1"
   }
 }
