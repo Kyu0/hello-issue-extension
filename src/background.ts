@@ -37,6 +37,7 @@ async function loginGithub(_callback: (response: any) => void) {
         if (!redirectUrl) return;
 
         const code = getCodeFromUrl(redirectUrl);
+        if (!code) return;
 
         fetch(SERVER_URL+'/api/v1/oauth/github', {
             method: 'POST',
