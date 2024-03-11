@@ -9,5 +9,13 @@
     "background": {
        "service_worker": "background.js"
     },
+    "permissions": [
+        "identity",
+        "storage"
+    ],
+    "host_permissions": [
+        "https://github.com/*",
+        "http://localhost/*"
+    ],
     "default_locale": "en"
 }

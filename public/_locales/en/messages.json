@@ -4,5 +4,11 @@
     },
     "extension_description": {
         "message": "This is extension to help you easily climb your way of contributions."
+    },
+    "my_server_fault": {
+        "message": "Hello Issue Server Error...😭"
+    },
+    "check_network": {
+        "message": "Please check network status."
     }
 }
