@@ -10,5 +10,8 @@
     },
     "check_network": {
         "message": "인터넷 연결 상태를 확인해주세요."
+    },
+    "go_to_repository": {
+        "message": "깃허브 레포지토리 가기"
     }
 }

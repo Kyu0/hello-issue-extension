@@ -11,14 +11,14 @@ body {
     min-width: 20em;
 }
 
-main {
+main > .greeting {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-main .oauth.github {
+main > .greeting .oauth.github {
     display: flex;
     align-items: center;
     background-color: #000;
@@ -29,12 +29,24 @@ main .oauth.github {
     height: 3em;
 }
 
-main .oauth.github > img {
+main > .greeting .oauth.github > img {
     width: 2em;
 }
 
+main > .profile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+main > .profile > .picture {
+    width: 14em;
+    border-radius: 50%;
+}
+
 .hide {
-    display: none;
+    display: none !important;
 }
 
 .loading {

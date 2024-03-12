@@ -10,5 +10,8 @@
     },
     "check_network": {
         "message": "Please check network status."
+    },
+    "go_to_repository": {
+        "message": "Go to my Repository"
     }
 }

@@ -1,11 +1,20 @@
 <link href="popup.css" rel="stylesheet" type="text/css"></link>
 
 <main>
-    <h1>Hello Issue</h1>
-    <button type="button" class="oauth github">
-        <img src="./images/github-white-logo.svg"></img>
-        Sign in With Github
-    </button>
+    <div class="greeting">
+        <h1 data-locale="extension_name">Hello Issue</h1>
+        <button type="button" class="oauth github">
+            <img src="./images/github-white-logo.svg" data-locale="sigin_in_github"></img>
+            Sign in With Github
+        </button>
+    </div>
+    <div class="profile hide">
+        <img class="picture"/>
+        <h1 class="username"></h1>
+        <!-- TODO: bio 흐르듯이 CSS 효과 추가 -->
+        <p class="bio"></p>
+        <a class="repository" target="_blank" data-locale="go_to_repository"></a>
+    </div>
 </main>
 <div class="loading hide">
     <div class="spinner"></div>
