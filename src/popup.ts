@@ -1,5 +1,6 @@
 import { Octokit } from '@octokit/rest';
 import $ from 'jquery';
+import { showTag, hideTag, localization } from './util';
 
 // TODO: Modularization
 interface Authentication {
@@ -13,50 +14,69 @@ interface MessageResponse {
     data: any
 }
 
-const $loading = $('.loading');
-const $greeting = $('.greeting');
-const $profile = $('.profile');
-
-function showTag($tag: JQuery<HTMLElement>) {
-    $tag.removeClass('hide');
+interface UserProfile {
+    login: string;
+    id: number;
+    node_id: string;
+    avatar_url: string;
+    gravatar_id: string | null;
+    url: string;
+    html_url: string;
+    followers_url: string;
+    following_url: string;
+    gists_url: string;
+    starred_url: string;
+    subscriptions_url: string;
+    organizations_url: string;
+    repos_url: string;
+    events_url: string;
+    received_events_url: string;
+    type: string;
+    site_admin: boolean;
+    name: string | null;
+    company: string | null;
+    blog: string | null;
+    location: string | null;
+    email: string | null;
+    hireable: boolean | null;
+    bio: string | null;
+    twitter_username?: string | null | undefined;
+    public_repos: number;
+    public_gists: number;
+    followers: number;
+    following: number;
+    created_at: string;
+    updated_at: string;
 }
 
-function hideTag($tag: JQuery<HTMLElement>) {
-    $tag.addClass('hide');
-}
-
-// TODO 1: profile 타입 축약해서 쓸 수 있는지 알아보기 ... Octokit에서 정의한 타입임
-// TODO 2: 코드 가다듬기
-function updatePage(profile: { login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gists_url: string; starred_url: string; subscriptions_url: string; organizations_url: string; repos_url: string; events_url: string; received_events_url: string; type: string; site_admin: boolean; name: string | null; company: string | null; blog: string | null; location: string | null; email: string | null; hireable: boolean | null; bio: string | null; twitter_username?: string | null | undefined; public_repos: number; public_gists: number; followers: number; following: number; created_at: string; updated_at: string; private_gists: number; total_private_repos: number; owned_private_repos: number; disk_usage: number; collaborators: number; two_factor_authentication: boolean; plan?: { collaborators: number; name: string; space: number; private_repos: number; } | undefined; suspended_at?: string | null | undefined; business_plus?: boolean | undefined; ldap_dn?: string | undefined; } | {
-        login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gists_url: string; starred_url: string; subscriptions_url: string; organizations_url: string; repos_url: string; events_url: string; received_events_url: string; type: string; site_admin: boolean; name: string | null; company: string | null; blog: string | null; location: string | null; email: string | null; hireable: boolean | null; bio: string | null; twitter_username?: string | null | undefined; public_repos: number; public_gists: number; followers: number; following: number; created_at: string; updated_at: string; plan?: { collaborators: number; name: string; space: number; private_repos: number; } | undefined; suspended_at?: string | null | undefined; private_gists?: number | undefined; total_private_repos?: number | undefined; owned_private_repos?: number | undefined; disk_usage?: number | undefined; collaborators?: number | undefined;
-    }) {
-    
-    $greeting.addClass('hide');
-    $profile.removeClass('hide');
-
-    const $picture = $profile.find('.picture');
-    const $username = $profile.find('.username');
-    const $bio = $profile.find('.bio');
-    const $repository = $profile.find('.repository');
-
-    $picture.attr('src', profile.avatar_url);
-    $username.text(profile.login);
-    if (profile.bio) $bio.text(profile.bio);
-    $repository.attr('href', profile.repos_url);
-}
-
-// popup.html 파일에 대해서 localization을 제공하기 위해 data-locale="${messages.json의 키}" 형식으로 드러날 텍스트를 지정 후 변환
-function localization() {
-    document.querySelectorAll('[data-locale]').forEach(elem => {
-        if (elem instanceof HTMLElement && elem.dataset.locale)
-            elem.innerText = chrome.i18n.getMessage(elem.dataset.locale)
-    });
-}
+// popup.html의 접근이 필요한 태그들을 선언
+const tags = {
+    $loading: $('.loading'),
+    $greeting: $('.greeting'),
+    $profile: $('.profile'),
+    profile: {
+        $picture: $('.profile').find('.picture'),
+        $username: $('.profile').find('.username'),
+        $bio: $('.profile').find('.bio'),
+        $repository: $('.profile').find('.repository')
+    }
+};
 
 localization();
 
+function updatePage(profile: UserProfile) {
+    hideTag(tags.$greeting);
+    showTag(tags.$profile);
+
+    tags.profile.$picture.attr('src', profile.avatar_url);
+    tags.profile.$username.text(profile.login);
+    if (profile.bio) tags.profile.$bio.text(profile.bio);
+    tags.profile.$repository.attr('href', profile.repos_url);
+}
+
 $('.oauth.github').on('click', async () => {
-    showTag($loading);
+    showTag(tags.$loading);
+
     const response: MessageResponse = await new Promise((resolve) => {
         chrome.runtime.sendMessage({ msg: 'LOGIN_GITHUB' }, response => {
             resolve(response);
@@ -74,8 +94,7 @@ $('.oauth.github').on('click', async () => {
         }
     });
 
-    //avatar_url, bio: 개발자 외길 인생...!, repos_url, login
     updatePage(res.data);
 
-    hideTag($loading);
+    hideTag(tags.$loading);
 });
