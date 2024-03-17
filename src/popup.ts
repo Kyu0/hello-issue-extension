@@ -53,6 +53,7 @@ interface UserProfile {
 const tags = {
     $loading: $('.loading'),
     $greeting: $('.greeting'),
+    $login: $('.greeting').find('.oauth.github'),
     $profile: $('.profile'),
     profile: {
         $picture: $('.profile').find('.picture'),
@@ -74,7 +75,7 @@ function updatePage(profile: UserProfile) {
     tags.profile.$repository.attr('href', profile.repos_url);
 }
 
-$('.oauth.github').on('click', async () => {
+tags.$login.on('click', async () => {
     showTag(tags.$loading);
 
     const response: MessageResponse = await new Promise((resolve) => {
