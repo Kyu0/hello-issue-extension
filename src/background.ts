@@ -81,6 +81,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 sendResponse(response);
             });
             return true;
+        case 'USER_INFO':
+            chrome.storage.local.get('github').then( response => {
+                sendResponse(response.github);
+            });
+            return true;
         default:
             break;
     }

@@ -89,13 +89,32 @@ tags.$login.on('click', async () => {
     const authentication: Authentication = response.data;
     const octokit = new Octokit({ auth: authentication.accessToken });
 
-    const res = await octokit.request('GET /user', {
+    octokit.request('GET /user', {
         headers: {
           'X-GitHub-Api-Version': '2022-11-28'
         }
+    }).then(response => {
+        updatePage(response.data);
+        hideTag(tags.$loading);
     });
+});
 
-    updatePage(res.data);
+document.addEventListener('DOMContentLoaded', () => {
+    chrome.runtime.sendMessage({ msg: 'USER_INFO' })
+    .then(github => {
+        if (!github) return;
+        
+        showTag(tags.$loading);
+        
+        const octokit = new Octokit({ auth: github.accessToken });
 
-    hideTag(tags.$loading);
+        octokit.request('GET /user', {
+            headers: {
+            'X-GitHub-Api-Version': '2022-11-28'
+            }
+        }).then(response => {
+            updatePage(response.data);
+            hideTag(tags.$loading);
+        });
+    });
 });
