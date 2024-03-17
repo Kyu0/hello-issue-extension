@@ -37,7 +37,7 @@ function updatePage(profile: { login: string; id: number; node_id: string; avata
     const $picture = $profile.find('.picture');
     const $username = $profile.find('.username');
     const $bio = $profile.find('.bio');
-    const $repository = $profile.find('repository');
+    const $repository = $profile.find('.repository');
 
     $picture.attr('src', profile.avatar_url);
     $username.text(profile.login);
