@@ -1,23 +1,39 @@
 <link href="popup.css" rel="stylesheet" type="text/css"></link>
 
 <main>
-    <div class="greeting">
+    <div class="greeting hide">
         <h1 data-locale="extension_name">Hello Issue</h1>
         <button type="button" class="oauth github">
             <img src="./images/github-white-logo.svg" data-locale="sigin_in_github"></img>
             Sign in With Github
         </button>
     </div>
-    <div class="profile hide">
+    <div class="profile">
         <img class="picture"/>
-        <h1 class="username"></h1>
+        <h1 class="username">asd</h1>
         <!-- TODO: bio 흐르듯이 CSS 효과 추가 -->
-        <p class="bio"></p>
-        <a class="repository" target="_blank" data-locale="go_to_repository"></a>
+        <p class="bio">asdasd</p>
+        <a class="repository" target="_blank" data-locale="go_to_repository">asdsad</a>
     </div>
-</main>
+    <div class="programming-language" style="background: lightcyan;">
+        <div class="language-search">
+            <input id="language-input">
+            <div class="language-list">
+                <ul>
+                    <!-- this will filled by popup.ts -->
+                </ul>
+            </div>
+        </div>
+
+        <ul id="favorite-language-list">
+            <li><span>hello<button class="remove-language">X</button></span></li>
+            <li><span>hello<button>X</button></span></li>
+            <li><span>hello<button>X</button></span></li>
+        </ul>
+    </div>
+    </main>
 <div class="loading hide">
     <div class="spinner"></div>
 </div>
-    
+
 <script src="popup.js"></script>

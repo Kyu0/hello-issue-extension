@@ -1,6 +1,6 @@
 import { Octokit } from '@octokit/rest';
 import $ from 'jquery';
-import { showTag, hideTag, localization } from './util';
+import { showTag, hideTag, localization, fetchLanguageSet, toFindRegExp } from './util';
 
 // TODO: Modularization
 interface Authentication {
@@ -49,6 +49,12 @@ interface UserProfile {
     updated_at: string;
 }
 
+interface LanguageInfo {
+    [key: string] : {
+        color: string
+    }
+}
+
 // popup.html의 접근이 필요한 태그들을 선언
 const tags = {
     $loading: $('.loading'),
@@ -60,8 +66,15 @@ const tags = {
         $username: $('.profile').find('.username'),
         $bio: $('.profile').find('.bio'),
         $repository: $('.profile').find('.repository')
+    },
+    languages: {
+        $input: $('#language-input'),
+        $favorite: $('#favorite-language-list'),
+        $list: $('.language-list > ul')
     }
 };
+
+let LANGUAGES: LanguageInfo;
 
 localization();
 
@@ -99,7 +112,68 @@ tags.$login.on('click', async () => {
     });
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+function addLanguage(language: string) {
+    // Add language into favorite languages
+}
+
+function removeLanguage(language: string) {
+    // Remove language into favorite languages
+}
+
+function fetchRecommandKeys(recommandedKeys: string[]) {
+    tags.languages.$list.empty();
+    recommandedKeys.map(language => {
+        // TODO: add eventlistener
+        const $option = $(`<li class="add-language" value="${language}"><span style="background-color: ${LANGUAGES[language]['color']};"></span>${language}</li>`);
+        tags.languages.$list.append($option);
+    });
+}
+
+function appendFavoriteLanguages() {
+    chrome.runtime.sendMessage({ msg: 'FAVORITE_LANGUAGES' })
+    .then(favoriteLanguages => {
+        if (!favoriteLanguages) return;
+
+        favoriteLanguages.forEach( (favoriteLanguage: string) => {
+            const $favorite = $(`<li><span>${favoriteLanguage}</span></li>`);
+            // TODO: add event listener
+            const $removeButton = $('<button class="remove-language">X</button>');
+
+            $favorite.append($removeButton);
+            tags.languages.$favorite.append($favorite);
+        })
+    })
+}
+
+function recommandKeys(input: string) {
+    const regexp = toFindRegExp(input);
+
+    return Object.keys(LANGUAGES)
+        .filter(key => regexp.test(key))
+        .slice(0, 10);
+}
+
+async function loadVariables() {
+    LANGUAGES = await fetchLanguageSet();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadVariables();
+
+    appendFavoriteLanguages();
+
+
+    tags.languages.$input.on('input', () => {
+        const value = tags.languages.$input.val() as string;
+
+        if (value.length == 0) {
+            tags.languages.$list.empty();
+            return;
+        }
+
+        fetchRecommandKeys(recommandKeys(value));
+    });
+
     chrome.runtime.sendMessage({ msg: 'USER_INFO' })
     .then(github => {
         if (!github) return;

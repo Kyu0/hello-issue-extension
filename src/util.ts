@@ -24,3 +24,21 @@ export function localization() {
             elem.innerText = chrome.i18n.getMessage(elem.dataset.locale)
     });
 }
+
+/**
+ * 
+ */
+export function fetchLanguageSet() {
+    return fetch('./languages.json')
+        .then(res => res.json());
+}
+
+
+export function toFindRegExp(input: string): RegExp {
+    input = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // escape special characters
+        .split(/([\\\\]?.)/)
+        .filter(Boolean) // remove empty strings
+        .join('.*'); // append wildcards between characters
+
+    return new RegExp('^'+input, 'i');
+}
