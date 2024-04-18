@@ -1,4 +1,5 @@
 const SERVER_URL='http://localhost:8080';
+const MAX_FAVORITE_LANGUAGE = 3;
 
 type GithubTokenResponse = { access_token: string, scope: string, token_type: string };
 
@@ -84,6 +85,38 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         case 'USER_INFO':
             chrome.storage.local.get('github').then( response => {
                 sendResponse(response.github);
+            });
+            return true;
+        case 'ADD_FAVORITE_LANGUAGE':
+            const selectedLanguage = request.data;
+            chrome.storage.local.get('favorite_language').then( data => {
+                const favoriteLanguages = data.favorite_language;
+
+                if (Object.keys(favoriteLanguages).length >= MAX_FAVORITE_LANGUAGE) {
+                    sendResponse(Object.keys(favoriteLanguages));
+                    return true;
+                }
+
+                favoriteLanguages[selectedLanguage] = true;
+
+                chrome.storage.local.set({ favorite_language: favoriteLanguages });
+                sendResponse(Object.keys(favoriteLanguages));
+            });
+            return true;
+        case 'REMOVE_FAVORITE_LANGUAGE':
+            const removeLanguage = request.data;
+            chrome.storage.local.get('favorite_language').then( data => {
+                const favoriteLanguages = data.favorite_language;
+
+                delete favoriteLanguages[removeLanguage];
+
+                chrome.storage.local.set({ favorite_language: favoriteLanguages });
+                sendResponse(Object.keys(favoriteLanguages));
+            });
+            return true;
+        case 'GET_FAVORITE_LANGUAGE':
+            chrome.storage.local.get('favorite_language').then( response => {
+                sendResponse(Object.keys(response.favorite_language));
             });
             return true;
         default:

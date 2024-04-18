@@ -70,7 +70,10 @@ const tags = {
     languages: {
         $input: $('#language-input'),
         $favorite: $('#favorite-language-list'),
-        $list: $('.language-list > ul')
+        $list: $('.language-list > ul'),
+        list: {
+            $container: $('.language-list')
+        }
     }
 };
 
@@ -112,37 +115,41 @@ tags.$login.on('click', async () => {
     });
 });
 
-function addLanguage(language: string) {
-    // Add language into favorite languages
-}
-
-function removeLanguage(language: string) {
-    // Remove language into favorite languages
-}
-
 function fetchRecommandKeys(recommandedKeys: string[]) {
     tags.languages.$list.empty();
+
     recommandedKeys.map(language => {
-        // TODO: add eventlistener
         const $option = $(`<li class="add-language" value="${language}"><span style="background-color: ${LANGUAGES[language]['color']};"></span>${language}</li>`);
+        $option.on('click', (event) => {
+            tags.languages.$input.val('').trigger('input');
+            tags.languages.list.$container.addClass('hide');
+
+            const selectedLanguage = event.target.getAttribute('value');
+            chrome.runtime.sendMessage({ msg: 'ADD_FAVORITE_LANGUAGE', data: selectedLanguage }).then(response => {
+                fetchFavoriteLanguages(response);
+            });
+        });
         tags.languages.$list.append($option);
     });
 }
 
-function appendFavoriteLanguages() {
-    chrome.runtime.sendMessage({ msg: 'FAVORITE_LANGUAGES' })
-    .then(favoriteLanguages => {
-        if (!favoriteLanguages) return;
+function fetchFavoriteLanguages(favoriteLanguages: string[]) {
+    tags.languages.$favorite.empty();
 
-        favoriteLanguages.forEach( (favoriteLanguage: string) => {
-            const $favorite = $(`<li><span>${favoriteLanguage}</span></li>`);
-            // TODO: add event listener
-            const $removeButton = $('<button class="remove-language">X</button>');
+    favoriteLanguages.map( (favoriteLanguage: string) => {
+        const $favorite = $(`<li><span>${favoriteLanguage}</span></li>`);
+        const $removeButton = $(`<button value="${favoriteLanguage}" class="remove-language">X</button>`);
+        $removeButton.on('click', (event) => {
+            const removeLanguage = event.target.getAttribute('value');
 
-            $favorite.append($removeButton);
-            tags.languages.$favorite.append($favorite);
-        })
-    })
+            chrome.runtime.sendMessage({ msg: 'REMOVE_FAVORITE_LANGUAGE', data: removeLanguage }).then(response => {
+                fetchFavoriteLanguages(response);
+            });
+        });
+
+        $favorite.append($removeButton);
+        tags.languages.$favorite.append($favorite);
+    });
 }
 
 function recommandKeys(input: string) {
@@ -157,22 +164,29 @@ async function loadVariables() {
     LANGUAGES = await fetchLanguageSet();
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadVariables();
-
-    appendFavoriteLanguages();
-
+function addEventListeners() {
+    tags.languages.$input.on('focus', () => {
+        if (tags.languages.list.$container.hasClass('hide')) {
+            tags.languages.list.$container.removeClass('hide');
+        }
+    });
 
     tags.languages.$input.on('input', () => {
         const value = tags.languages.$input.val() as string;
 
-        if (value.length == 0) {
+        if (value.length == 0 && !tags.languages.list.$container.hasClass('hide')) {
             tags.languages.$list.empty();
             return;
         }
-
+        
         fetchRecommandKeys(recommandKeys(value));
     });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadVariables();
+    addEventListeners();
+    
 
     chrome.runtime.sendMessage({ msg: 'USER_INFO' })
     .then(github => {
@@ -190,5 +204,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             updatePage(response.data);
             hideTag(tags.$loading);
         });
+    });
+
+    chrome.runtime.sendMessage({ msg: 'GET_FAVORITE_LANGUAGE' }).then(response => {
+        fetchFavoriteLanguages(response);
     });
 });

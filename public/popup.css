@@ -49,6 +49,7 @@ main > .programming-language {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 1em;
     height: 7em;
 }
 
@@ -74,12 +75,12 @@ main > .programming-language > ul#favorite-language-list > li + li {
 }
 
 main > .programming-language > ul#favorite-language-list > li > span {
+    font-size: 1.2em;
     font-weight: 600;
 }
 
-main > .programming-language > ul#favorite-language-list > li > span > button {
+main > .programming-language > ul#favorite-language-list > li > button {
     font-weight: 700;
-
     border: none;
     background-color: transparent;
 }
